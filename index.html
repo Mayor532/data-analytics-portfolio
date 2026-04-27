@@ -1,1 +1,637 @@
-b
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adesina Mayowa — Data Analytics Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0C0C0C;
+    --surface: #141414;
+    --border: #222222;
+    --accent: #E8FF47;
+    --accent2: #FF6B35;
+    --text: #F0EDE6;
+    --muted: #666666;
+    --card: #181818;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 80px 60px 60px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 40px;
+  }
+
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 8vw, 110px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+
+  h1 span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .header-right {
+    text-align: right;
+    padding-bottom: 8px;
+  }
+
+  .header-right .role {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .header-right .contact {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+  }
+
+  .header-right .contact a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* ── TOOLS BAR ── */
+  .tools-bar {
+    position: relative;
+    z-index: 1;
+    padding: 20px 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tools-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+
+  .tool-chip {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .tool-chip.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232, 255, 71, 0.06);
+  }
+
+  /* ── PROJECTS GRID ── */
+  .projects {
+    position: relative;
+    z-index: 1;
+    padding: 0 60px 80px;
+  }
+
+  .section-label {
+    padding: 50px 0 30px;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  /* Project cards — varied sizes */
+  .card {
+    background: var(--card);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: background 0.3s;
+  }
+
+  .card:hover { background: #1E1E1E; }
+
+  .card:hover .card-number { color: var(--accent); }
+  .card:hover .card-arrow { opacity: 1; transform: translate(0, 0); }
+
+  /* Grid spans */
+  .card-wide { grid-column: span 7; }
+  .card-narrow { grid-column: span 5; }
+  .card-half { grid-column: span 6; }
+  .card-third { grid-column: span 4; }
+  .card-full { grid-column: span 12; }
+
+  /* Accent stripe */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .card:hover::before { transform: scaleX(1); }
+
+  .card-number {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 20px;
+    transition: color 0.3s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .card-category {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid;
+    border-radius: 1px;
+    margin-bottom: 16px;
+  }
+
+  .cat-ecommerce { color: #FF6B35; border-color: rgba(255,107,53,0.4); background: rgba(255,107,53,0.06); }
+  .cat-finance { color: #47B4FF; border-color: rgba(71,180,255,0.4); background: rgba(71,180,255,0.06); }
+  .cat-health { color: #6BFF9E; border-color: rgba(107,255,158,0.4); background: rgba(107,255,158,0.06); }
+  .cat-transport { color: #FFD147; border-color: rgba(255,209,71,0.4); background: rgba(255,209,71,0.06); }
+  .cat-history { color: #D47BFF; border-color: rgba(212,123,255,0.4); background: rgba(212,123,255,0.06); }
+
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(18px, 2vw, 26px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+
+  .card-tools {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .tool-tag {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .card-desc {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #999;
+    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .card-metrics {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .metric-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+
+  .metric-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .card-arrow {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 20px;
+    color: var(--accent);
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: all 0.3s;
+  }
+
+  /* ── GITHUB README SECTION ── */
+  .readme-section {
+    position: relative;
+    z-index: 1;
+    margin: 0 60px 80px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .readme-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .readme-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .readme-body {
+    padding: 32px 24px;
+    font-size: 12px;
+    line-height: 1.9;
+    color: #888;
+    white-space: pre-wrap;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .readme-body .hl { color: var(--accent); }
+  .readme-body .hl2 { color: #47B4FF; }
+  .readme-body .comment { color: #444; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 40px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
+  .card:nth-child(6) { animation-delay: 0.3s; }
+  .card:nth-child(7) { animation-delay: 0.35s; }
+
+  @media (max-width: 768px) {
+    header { padding: 40px 24px; grid-template-columns: 1fr; }
+    .header-right { text-align: left; }
+    .tools-bar, .projects { padding-left: 24px; padding-right: 24px; }
+    .card-wide, .card-narrow, .card-half, .card-third, .card-full { grid-column: span 12; }
+    .readme-section { margin: 0 24px 60px; }
+    footer { padding: 30px 24px; flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div>
+    <div class="header-label">Data Analytics Portfolio</div>
+    <h1>Adesina<span>Mayowa</span></h1>
+  </div>
+  <div class="header-right">
+    <div class="role">Turning data into decisions</div>
+    <div class="contact">
+      Lagos, Nigeria · Remote-Ready<br>
+      <a href="mailto:adeymay@gmail.com">adeymay@gmail.com</a><br>
+      Power BI · Tableau · SQL · Python
+    </div>
+  </div>
+</header>
+
+<!-- TOOLS BAR -->
+<div class="tools-bar">
+  <span class="tools-label">Stack —</span>
+  <span class="tool-chip active">Power BI</span>
+  <span class="tool-chip active">Tableau</span>
+  <span class="tool-chip active">SQL</span>
+  <span class="tool-chip active">Python</span>
+  <span class="tool-chip active">Excel</span>
+  <span class="tool-chip active">DAX</span>
+  <span class="tool-chip">20+ Dashboards</span>
+  <span class="tool-chip">5 Industries</span>
+</div>
+
+<!-- PROJECTS -->
+<div class="projects">
+  <div class="section-label">Selected Projects — 01 / 07</div>
+
+  <div class="grid">
+
+    <!-- 01: E-commerce -->
+    <div class="card card-wide">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">01 —</div>
+      <div class="card-category cat-ecommerce">E-commerce · Retail</div>
+      <div class="card-title">E-Commerce Sales Analysis Dashboard</div>
+      <div class="card-tools">
+        <span class="tool-tag">Tableau</span>
+        <span class="tool-tag">Data Visualization</span>
+        <span class="tool-tag">Sales Analytics</span>
+      </div>
+      <div class="card-desc">Analyzed transactional sales data from an e-commerce platform to uncover revenue patterns, top-performing product categories, and seasonal demand shifts. Built an interactive Tableau dashboard that allows stakeholders to filter by region, category, and time period — enabling faster, evidence-based inventory and marketing decisions.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">360°</span><span class="metric-label">Sales View</span></div>
+        <div class="metric"><span class="metric-val">Multi</span><span class="metric-label">Region Filter</span></div>
+        <div class="metric"><span class="metric-val">KPI</span><span class="metric-label">Tracked</span></div>
+      </div>
+    </div>
+
+    <!-- 02: Global Shark Attacks -->
+    <div class="card card-narrow">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">02 —</div>
+      <div class="card-category cat-history">Environmental · Public Safety</div>
+      <div class="card-title">Global Shark Attacks Analysis</div>
+      <div class="card-tools">
+        <span class="tool-tag">Tableau</span>
+        <span class="tool-tag">Geospatial</span>
+        <span class="tool-tag">Trend Analysis</span>
+      </div>
+      <div class="card-desc">Explored 100+ years of global shark attack records to identify high-risk locations, seasonal attack patterns, and victim activity types. Used Tableau maps and time-series charts to visualize geographic hotspots and temporal trends — revealing that most incidents occur during summer months in coastal recreational zones.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">100+</span><span class="metric-label">Years of Data</span></div>
+        <div class="metric"><span class="metric-val">Global</span><span class="metric-label">Coverage</span></div>
+      </div>
+    </div>
+
+    <!-- 03: Microsoft Stock -->
+    <div class="card card-narrow">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">03 —</div>
+      <div class="card-category cat-finance">Finance · Stock Market</div>
+      <div class="card-title">Microsoft Stock Market Analysis</div>
+      <div class="card-tools">
+        <span class="tool-tag">Tableau</span>
+        <span class="tool-tag">Financial Analytics</span>
+        <span class="tool-tag">Time-Series</span>
+      </div>
+      <div class="card-desc">Conducted a deep-dive analysis of Microsoft's historical stock performance, tracking open/close prices, trading volume, and volatility over multiple years. Identified key price movements correlated with product launches and earnings reports. Built a Tableau dashboard featuring candlestick-style visuals and moving average trend lines for investor-level insight.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">Multi</span><span class="metric-label">Year Range</span></div>
+        <div class="metric"><span class="metric-val">OHLC</span><span class="metric-label">Analysis</span></div>
+      </div>
+    </div>
+
+    <!-- 04: NYC Taxi -->
+    <div class="card card-wide">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">04 —</div>
+      <div class="card-category cat-transport">Transport · Urban Mobility</div>
+      <div class="card-title">NYC Taxi Trip Analysis Report</div>
+      <div class="card-tools">
+        <span class="tool-tag">Power BI</span>
+        <span class="tool-tag">DAX</span>
+        <span class="tool-tag">Geospatial</span>
+        <span class="tool-tag">Large Dataset</span>
+      </div>
+      <div class="card-desc">Processed and visualized millions of NYC taxi trip records to uncover peak demand hours, high-revenue pickup zones, average fare trends, and trip duration patterns. Used Power BI's map visuals and DAX measures to build a dynamic, filterable report that reveals operational inefficiencies and revenue optimization opportunities for fleet managers and city planners.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">M+</span><span class="metric-label">Records Analyzed</span></div>
+        <div class="metric"><span class="metric-val">Geo</span><span class="metric-label">Mapped Zones</span></div>
+        <div class="metric"><span class="metric-val">DAX</span><span class="metric-label">Measures Built</span></div>
+      </div>
+    </div>
+
+    <!-- 05: Sales Excel -->
+    <div class="card card-half">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">05 —</div>
+      <div class="card-category cat-ecommerce">Sales · Business Intelligence</div>
+      <div class="card-title">Sales Data Analysis Report</div>
+      <div class="card-tools">
+        <span class="tool-tag">Microsoft Excel</span>
+        <span class="tool-tag">Pivot Tables</span>
+        <span class="tool-tag">Charts</span>
+      </div>
+      <div class="card-desc">Built a comprehensive sales performance report using advanced Excel — including PivotTables, dynamic charts, VLOOKUP, and conditional formatting — to track monthly revenue, product performance, and sales rep productivity. Designed an executive summary dashboard that gives leadership a one-page view of business health without needing to dig through raw data.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">Excel</span><span class="metric-label">Advanced</span></div>
+        <div class="metric"><span class="metric-val">1-Page</span><span class="metric-label">Exec View</span></div>
+      </div>
+    </div>
+
+    <!-- 06: Life Expectancy -->
+    <div class="card card-half">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">06 —</div>
+      <div class="card-category cat-health">Healthcare · Global Health</div>
+      <div class="card-title">Global Life Expectancy Report</div>
+      <div class="card-tools">
+        <span class="tool-tag">Power BI</span>
+        <span class="tool-tag">DAX</span>
+        <span class="tool-tag">Public Health Data</span>
+      </div>
+      <div class="card-desc">Analyzed WHO and World Bank life expectancy datasets across 150+ countries, correlating longevity with GDP, healthcare access, and immunization rates. Built a Power BI report with world map visuals, scatter plots, and trend lines — revealing stark disparities between high and low-income nations and identifying the strongest predictors of longer life expectancy.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">150+</span><span class="metric-label">Countries</span></div>
+        <div class="metric"><span class="metric-val">WHO</span><span class="metric-label">Data Source</span></div>
+      </div>
+    </div>
+
+    <!-- 07: Cholera -->
+    <div class="card card-third">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">07 —</div>
+      <div class="card-category cat-health">Public Health · Historical</div>
+      <div class="card-title">Cholera Outbreak Stockholm, 1853</div>
+      <div class="card-tools">
+        <span class="tool-tag">Tableau</span>
+        <span class="tool-tag">Historical Data</span>
+        <span class="tool-tag">Epidemiology</span>
+      </div>
+      <div class="card-desc">Reconstructed and visualized the 1853 Stockholm cholera outbreak using historical records — mapping case clusters by district and date to identify the outbreak's origin point and spread pattern. Inspired by John Snow's pioneering epidemiological work, this project demonstrates how data visualization can uncover public health insights even from century-old datasets.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">1853</span><span class="metric-label">Historical</span></div>
+      </div>
+    </div>
+
+    <!-- 08: Historical Stock -->
+    <div class="card card-third">
+      <div class="card-arrow">↗</div>
+      <div class="card-number">08 —</div>
+      <div class="card-category cat-finance">Finance · Comparative</div>
+      <div class="card-title">Historical Stock Prices — 10 Companies</div>
+      <div class="card-tools">
+        <span class="tool-tag">Tableau</span>
+        <span class="tool-tag">Comparative Analysis</span>
+        <span class="tool-tag">Financial Data</span>
+      </div>
+      <div class="card-desc">Compared historical stock price trajectories of 10 major global companies including Apple, Amazon, Tesla, and Google. Visualized long-term growth curves, market crash impacts, and recovery periods using interactive Tableau line charts — providing a clear picture of which companies demonstrated the most resilient and high-growth performance over time.</div>
+      <div class="card-metrics">
+        <div class="metric"><span class="metric-val">10</span><span class="metric-label">Companies</span></div>
+      </div>
+    </div>
+
+    <!-- Bonus card -->
+    <div class="card card-third" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background: #101010;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:48px; color:var(--accent); line-height:1;">20+</div>
+      <div style="font-size:10px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-top:8px;">Total Dashboards</div>
+      <div style="font-size:11px; color:#555; margin-top:16px; line-height:1.7;">More projects available<br>on request</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- README SECTION -->
+<div class="readme-section">
+  <div class="readme-header">
+    <div class="readme-dot" style="background:#FF5F57"></div>
+    <div class="readme-dot" style="background:#FFBD2E"></div>
+    <div class="readme-dot" style="background:#28C840"></div>
+    <span style="margin-left:8px;">README.md — Copy this to your GitHub</span>
+  </div>
+  <div class="readme-body"><span class="comment"># 👋 Adesina Mayowa Adekunle — Data Analytics Portfolio</span>
+
+<span class="hl">## About Me</span>
+Data Analyst based in Lagos, Nigeria, specializing in turning complex
+datasets into clear, actionable business insights. Certified Microsoft
+Power BI Data Analyst with experience across e-commerce, finance,
+healthcare, aviation, and energy sectors.
+
+📧 adeymay@gmail.com | 🌍 Open to Remote & Hybrid Opportunities
+
+<span class="hl">## 🛠 Tools & Skills</span>
+<span class="hl2">| Tool       | Proficiency |</span>
+| Power BI   | ████████░░  Advanced |
+| Tableau    | ████████░░  Advanced |
+| SQL/MySQL  | ███████░░░  Intermediate |
+| Python     | ██████░░░░  Intermediate |
+| Excel      | █████████░  Advanced |
+
+<span class="hl">## 📁 Featured Projects</span>
+1. 📊 E-Commerce Sales Analysis Dashboard — Tableau
+2. 🦈 Global Shark Attacks Analysis — Tableau
+3. 📈 Microsoft Stock Market Analysis — Tableau
+4. 🚕 NYC Taxi Trip Analysis — Power BI
+5. 💰 Sales Data Analysis Report — Excel
+6. 🌍 Global Life Expectancy Report — Power BI
+7. 🏥 Cholera Outbreak Stockholm 1853 — Tableau
+8. 📉 Historical Stock Prices (10 Companies) — Tableau
+
+<span class="comment">## 📜 Certifications</span>
+- Microsoft Certified: Power BI Data Analyst Associate
+- Data Analyst Fellowship — Quantum Analytics NG (Dec 2023)</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>Adesina Mayowa Adekunle · Data Analyst</span>
+  <span>Lagos, Nigeria · Remote-Ready · adeymay@gmail.com</span>
+  <span>20+ Dashboards · 5 Industries</span>
+</footer>
+
+</body>
+</html>
